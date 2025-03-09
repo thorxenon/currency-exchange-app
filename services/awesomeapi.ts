@@ -23,16 +23,15 @@ export const getUsd = async() =>{
 
 export const getEur = async() =>{
     try{
-        let url = baseUrl+='/last/eur-brl';
+        let url = baseUrl + '/last/eur-brl';
 
         const response = await fetch(url, {
             headers:{
                 'Content-Type':'application/json'
             }
         });
-
-        if(response.ok){
-            const data = await response.json();
+        const data = await response.json();
+        if(data.EURBRL){
             return parseFloat(data.EURBRL.ask);
         }
 
