@@ -1,0 +1,66 @@
+import { Image, StyleSheet, Text, View } from "react-native";
+import { Button } from "../components/button";
+import { useEffect, useState } from "react";
+import { number2Currency } from "../handlers/number2Currency";
+import { getUsd } from "../services/awesomeapi";
+
+export default function Screen(){
+    const [ loading, setLoading ] = useState(true);
+    const [ currentValue, setCurrentValue ] = useState<number>(0);
+
+    const handleUpdateDollarPrice = async() =>{
+        setLoading(true);
+        const dolar = await getUsd();
+        setLoading(false);
+        setCurrentValue(dolar);
+    }
+
+    useEffect(()=>{
+        handleUpdateDollarPrice();
+    },[]);
+
+    return(
+        <View style={styles.container}>
+            <Image
+                source={require("../assets/dolar.png")}
+                resizeMode="contain"
+                style={styles.logo}
+            />
+            {loading && <Text style={styles.h2}>Carregando...</Text>}
+
+            {!loading &&
+                <>
+                    <Text style={styles.h2}>O dólar americano está:</Text>
+                    <Text style={styles.currencyText}>{number2Currency(currentValue, 'pt-BR', 'BRL')}</Text>
+                    <Button label="Atualizar preço" onPress={handleUpdateDollarPrice}/>
+                </>
+            }
+        </View>
+    )
+}
+
+const styles = StyleSheet.create({
+    container:{
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "#0b1c2d",
+        paddingHorizontal: 20
+    },
+    logo:{
+        width: 200,
+        height: 180
+    },
+    h2:{
+        color: "#cccccc",
+        fontSize: 24,
+        marginTop: 30
+    },
+    currencyText:{
+        color: "#ffffff",
+        fontSize: 40,
+        fontWeight: "bold",
+        marginTop: 10,
+        marginBottom: 50
+    }
+});
